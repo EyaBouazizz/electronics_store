@@ -4,15 +4,25 @@ stages:
 
 services:
   - docker:dind
+  - mysql:8.0
 
 variables:
   DOCKER_DRIVER: overlay2 # Recommended for Docker in Docker to improve performance
   REGISTRY_URL: https://gitlab.com/eyabouaziz/projetsb/container_registry
   BACKEND_IMAGE: $REGISTRY_URL/backend:latest # Reusable variable for the image name
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: elecstore
+  MYSQL_USER: user
+  MYSQL_PASSWORD: password
 
 test-backend:
   image: openjdk:21-jdk-slim
   stage: test
+  before_script:
+    - apt-get update && apt-get install -y mysql-client
+    - echo "Waiting for database to be ready..."
+    - until mysqladmin ping -h "mysql" --silent; do echo "Waiting for MySQL..."; sleep 1; done
+    - mysql -h mysql -u root -proot elecstore < database/init.sql
   script:
     - apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
     - cd elecstore
