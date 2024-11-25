@@ -22,7 +22,7 @@ test-backend:
     - apt-get update && apt-get install -y default-mysql-client
     - echo "Waiting for database to be ready..."
     - until mysqladmin ping -h "mysql" --silent; do echo "Waiting for MySQL..."; sleep 1; done
-    - mysql -h mysql -u root -proot elecstore < database/init.sql
+    - mysql -h mysql -u root -proot elecstore < database/electronics.sql
   script:
     - apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
     - cd elecstore

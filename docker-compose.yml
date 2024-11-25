@@ -13,4 +13,4 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./database/elecstore.sql:/docker-entrypoint-initdb.d/elecstore.sql
+      - ./database/electronics.sql:/docker-entrypoint-initdb.d/electronics.sql
