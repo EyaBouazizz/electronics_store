@@ -11,9 +11,10 @@ variables:
   BACKEND_IMAGE: $REGISTRY_URL/backend:latest # Reusable variable for the image name
 
 test-backend:
-  image: maven:3.8.7-openjdk-21
+  image: openjdk:21-jdk-slim
   stage: test
   script:
+    - apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
     - mvn clean test
 
 build-backend:
@@ -24,3 +25,4 @@ build-backend:
   script:
     - docker build -t $BACKEND_IMAGE -f elecstore/Dockerfile .
     - docker push $BACKEND_IMAGE
+
