@@ -40,15 +40,15 @@ public class ProductsModel {
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    @Column(name = "price", precision = 10, scale = 3, nullable = false)
-    private BigDecimal price;
+    @Column(name = "price")
+    private double price;
 
     public ProductsModel() {
 		super();
 	}
     
 	public ProductsModel(String productName, String category, String brand, int popularity, int numberOfSales,
-			String image, String availableColors, String description, Date date, BigDecimal price) {
+			String image, String availableColors, String description, Date date, double price) {
 		super();
 		this.productName = productName;
 		this.category = category;
@@ -60,6 +60,22 @@ public class ProductsModel {
 		this.description = description;
 		this.date = date;
 		this.price = price;
+	}
+
+	public ProductsModel(int id, String productName, String category, String brand, int popularity, int numberOfSales,
+			String image, String availableColors, String description, Date date, double d) {
+		super();
+		this.id = id;
+		this.productName = productName;
+		this.category = category;
+		this.brand = brand;
+		this.popularity = popularity;
+		this.numberOfSales = numberOfSales;
+		this.image = image;
+		this.availableColors = availableColors;
+		this.description = description;
+		this.date = date;
+		this.price = d;
 	}
 
 	// Getters and Setters
@@ -83,7 +99,7 @@ public class ProductsModel {
     public void setDescription(String description) { this.description = description; }
     public Date getDate() { return date; }
     public void setDate(Date date) { this.date = date; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 }
 
