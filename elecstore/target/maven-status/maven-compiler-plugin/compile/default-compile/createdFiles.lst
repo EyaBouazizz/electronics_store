@@ -1,0 +1,5 @@
+electronics\elecstore\repositories\ProductsRepository.class
+electronics\elecstore\ElecstoreApplication.class
+electronics\elecstore\services\ProductsService.class
+electronics\elecstore\models\ProductsModel.class
+electronics\elecstore\controllers\ProductsController.class
