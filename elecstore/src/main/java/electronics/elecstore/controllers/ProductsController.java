@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProductsController {
 
     @Autowired
@@ -25,6 +26,11 @@ public class ProductsController {
         return productsService.getProductById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/category/{category}")
+    public List<ProductsModel> getProductsByCategory(@PathVariable String category) {
+        return productsService.getProductsByCategory(category);
     }
 
     @PostMapping

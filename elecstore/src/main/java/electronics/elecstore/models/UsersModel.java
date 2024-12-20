@@ -1,5 +1,6 @@
 package electronics.elecstore.models;
 
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,7 +18,8 @@ public class UsersModel {
     private String password;
 
     @Column(nullable = false)
-    private Integer status; // 0 for inactive, 1 for active
+    
+    private Integer status; // 0 for user , 1 for admin
 
     // Getters and Setters
     public Integer getId() {

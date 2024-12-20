@@ -10,11 +10,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/testimonials")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TestimonialsController {
 
     @Autowired
     private TestimonialsService testimonialsService;
 
+    @CrossOrigin
     @GetMapping
     public List<TestimonialsModel> getAllTestimonials() {
         return testimonialsService.getAllTestimonials();

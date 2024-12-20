@@ -3,6 +3,9 @@ package electronics.elecstore.models;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "carts")
 public class CartsModel {
@@ -15,6 +18,7 @@ public class CartsModel {
     private Long userId;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<CartItemModel> cartItems;
 
     // Constructors

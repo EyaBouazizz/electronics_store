@@ -1,0 +1,6 @@
+
+.carousel-control-prev,
+.carousel-control-next {
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for proper centering */
+}
