@@ -24,7 +24,7 @@ test-frontend:
     - cd frontend
     - npm ci --legacy-peer-deps
   script:
-    - npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox
+    - npm run test -- --watch=false --browsers=ChromeHeadless 
   artifacts:
     paths:
       - coverage/ # Save test coverage reports if applicable

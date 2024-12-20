@@ -56,13 +56,20 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    browsers: ['Opera'],
+    // browsers: ['Opera'],
+    // customLaunchers: {
+    //   OperaCustom: {
+    //       base: 'Opera',
+    //       flags: ['--no-sandbox'], // Optional flags
+    //       binary: 'D:/programmes/OperaGx/opera.exe', // Replace with your path
+    //   },
+
+    browsers: ['ChromeHeadless'],
     customLaunchers: {
-      OperaCustom: {
-          base: 'Opera',
-          flags: ['--no-sandbox'], // Optional flags
-          binary: 'D:/programmes/OperaGx/opera.exe', // Replace with your path
-      },
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
   },
 
 
