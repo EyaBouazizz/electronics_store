@@ -16,6 +16,7 @@ test-frontend:
   image: node:20
   stage: test
   before_script:
+    - cd frontend
     - npm ci # Install dependencies
   script:
     - npm run test -- --watch=false --browsers=ChromeHeadless
