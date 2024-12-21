@@ -14,3 +14,36 @@ services:
       - "3306:3306"
     volumes:
       - ./database/electronics.sql:/docker-entrypoint-initdb.d/electronics.sql
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend  # Assuming your backend Dockerfile is named 'Dockerfile.backend'
+    container_name: elecstore-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://elecstore-db:3306/elecstore
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - elecstore-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend  # Assuming your frontend Dockerfile is named 'Dockerfile.frontend'
+    container_name: elecstore-frontend
+    ports:
+      - "8080:8090"
+    depends_on:
+      - backend
+    networks:
+      - elecstore-network
+
+networks:
+  elecstore-network:
+    driver: bridge
