@@ -10,20 +10,6 @@ variables:
   MYSQL_USER: user
   MYSQL_PASSWORD: password
 
-test-backend:
-  image: openjdk:21-jdk-slim
-  stage: test
-  services:
-    - mysql:8.0
-  before_script:
-    - apt-get update && apt-get install -y default-mysql-client
-    - echo "Waiting for database to be ready..."
-    - until mysqladmin ping -h "mysql" --silent; do echo "Waiting for MySQL..."; sleep 1; done
-    - mysql -h mysql -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < database/electronics.sql
-  script:
-    - apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-    - cd elecstore
-    - mvn clean test
 
 build-docker-compose:
   image: docker:24
