@@ -55,4 +55,5 @@ build-docker-compose:
   script:
     - docker-compose build
     - docker-compose push
+    - docker-compose up
 
