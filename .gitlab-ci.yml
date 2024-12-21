@@ -42,5 +42,6 @@ build-frontend:
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" "$CI_REGISTRY" --password-stdin
   script:
+    - cd frontend
     - docker build -t $FRONTEND_IMAGE -f Dockerfile .
     - docker push $FRONTEND_IMAGE
