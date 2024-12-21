@@ -3,7 +3,8 @@ FROM node:20 AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install || (cat /root/.npm/_logs/* && exit 1)
+
 
 COPY . .
 
