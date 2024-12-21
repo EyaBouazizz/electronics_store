@@ -3,7 +3,7 @@ FROM node:20 AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install || (cat /root/.npm/_logs/* && exit 1)
+RUN npm install --legacy-peer-deps
 
 
 COPY . .
