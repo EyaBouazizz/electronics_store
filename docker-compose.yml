@@ -18,7 +18,8 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend  # Assuming your backend Dockerfile is named 'Dockerfile.backend'
+      dockerfile: Dockerfile.backend
+    image: $REGISTRY_URL/backend:latest
     container_name: elecstore-backend
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -35,7 +36,8 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend  # Assuming your frontend Dockerfile is named 'Dockerfile.frontend'
+      dockerfile: Dockerfile.frontend
+    image: $REGISTRY_URL/frontend:latest
     container_name: elecstore-frontend
     ports:
       - "8080:8090"
