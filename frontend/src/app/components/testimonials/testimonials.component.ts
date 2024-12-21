@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './testimonials.component.html',
   styleUrls: ['./testimonials.component.css']
 })
-export class TestimonialsComponent implements OnInit {
+export class TestimonialComponent implements OnInit {
   testimonials: any[] = [];
   testimonialForm: FormGroup;
   selectedFile: File | null = null;
