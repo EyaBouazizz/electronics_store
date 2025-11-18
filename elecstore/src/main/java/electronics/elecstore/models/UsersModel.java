@@ -20,6 +20,11 @@ public class UsersModel {
     @Column(nullable = false)
     
     private Integer status; // 0 for user , 1 for admin
+    
+    @Column(nullable = false)
+    
+    private String photo ;
+
 
     // Getters and Setters
     public Integer getId() {
@@ -52,5 +57,13 @@ public class UsersModel {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+    
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

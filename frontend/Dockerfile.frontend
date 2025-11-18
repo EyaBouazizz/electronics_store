@@ -1,20 +1,20 @@
+# Build stage
 FROM node:20 AS build
-
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install --legacy-peer-deps
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps
 
-COPY frontend/ ./
+COPY . .
+RUN npx ng build --configuration production
 
-
-RUN npm run build -- --output-path=dist
-
+# Runtime stage
 FROM nginx:alpine
-
-COPY --from=build /app/dist /usr/share/nginx/html
-
+# Remove default nginx welcome page
+RUN rm -rf /usr/share/nginx/html/*
+# Copy built assets
+COPY --from=build /app/dist/browser /usr/share/nginx/html
+# Copy custom Nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
-

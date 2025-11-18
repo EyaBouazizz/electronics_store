@@ -5,10 +5,12 @@ public class AuthResponse {
     private String username;
     private Integer status;
     private Integer id;
+    private String photo;
 
-    public AuthResponse(String token, String username, Integer status, Integer id) {
+    public AuthResponse(String token, String username, Integer status, Integer id, String photo) {
         this.token = token;
         this.username = username;
+        this.photo = photo;
         this.status = status;
         this.id = id ;
     }
@@ -41,6 +43,16 @@ public class AuthResponse {
 	public Integer getId() {
 		return id;
 	}
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+	
+	
     
     
 }

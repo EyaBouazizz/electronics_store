@@ -1,20 +1,26 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { CartService } from '../../../services/cart/cart.service';
-import { CartItem } from '../../../models/cartItem.model';
+import { CartService } from '../../services/cart/cart.service';
+import { CartItem } from '../../models/cartItem.model';
 import { CommonModule,isPlatformBrowser } from '@angular/common';
-
+import { CouponService } from '../../services/coupon/coupon.service';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
+  standalone: true,
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule,RouterModule],
 })
-export class CartComponent implements OnInit {
+export class CartsComponent implements OnInit {
   cartProducts: any[] = [];
   cartTotal: number = 0;
+  couponCode: string = '';
+  couponMessage: string = '';
+  isCouponApplied: boolean = false;
 
-  constructor(private cartService: CartService,@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(private cartService: CartService,@Inject(PLATFORM_ID) private platformId: Object,private couponService: CouponService) {}
 
   ngOnInit(): void {
     
@@ -65,6 +71,5 @@ export class CartComponent implements OnInit {
       this.loadCart();
     });
   }
-
 
 }

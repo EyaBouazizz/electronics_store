@@ -224,17 +224,20 @@
                               <div class="rounded position-relative fruite-item">
                                 <div class="fruite-img">
                                   <img
-                                    [src]="'assets/img/' + product.image"
+                                  [src]="getProductImage(product.image)"
                                     class="img-fluid w-100 rounded-top"
                                     style="width: 200px; height: 200px; object-fit: cover;"
-                                    alt=""
+                                    alt="{{product.productName}}"
                                   />
                                 </div>
-                                <div
-                                  class="text-white bg-secondary px-3 py-1 rounded position-absolute"
-                                  style="top: 10px; left: 10px;"
-                                >
+                                <div class="text-black bg-light px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
                                   {{ product.category }}
+                                </div>
+                                <div class="position-absolute" style="top: 10px; right: 10px; cursor: pointer;" (click)="toggleWishlist(product.id)">
+                                  <fa-icon
+                                    [icon]="isInWishlist(product.id) ? faHeartSolid : faHeartRegular"
+                                    class="text-danger fs-4"
+                                  ></fa-icon>
                                 </div>
                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                   <h4
@@ -250,7 +253,6 @@
                                     {{ product.description }}
                                   </p>
                                   <p class="text-gray fs-5 fw-bold mb-0">{{ product.price }} DT</p>
-                                  <div class="d-flex justify-content-between flex-lg-wrap">
                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                       <a
                                         *ngIf="isAdmin()"
@@ -276,12 +278,15 @@
                                         >
                                           <i class="fa fa-shopping-bag me-2 text-primary"></i>Cart
                                         </button>
-                                        <a href="#" class="btn btn-md boarder border-sec rounded-pill px-3 text-primary">
-                                          <i class="fa fa-eye me-2 text-primary"></i>More
-                                        </a>
+                                        <a href="javascript:void(0)" 
+                                        class="btn btn-md boarder border-sec rounded-pill px-3 text-primary"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#productDetailsModal"
+                                        (click)="loadProductDetails(product)">
+                                        <i class="fa fa-eye me-2 text-primary"></i>More
+                                      </a>
                                       </div>
                                     </div>
-                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -406,13 +411,84 @@
 
               <!-- Submit Button -->
               <div class="form-group text-center mt-4">
-                <button type="button"  (click)="editProduct()" class="btn btn-primary" [disabled]="editproductForm.invalid">
+                <button type="submit"  (click)="editProduct()" class="btn btn-primary" [disabled]="editproductForm.invalid">
                   Save Changes
                 </button>
               </div>
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Details Modal -->
+<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="productDetailsModalLabel">{{selectedProduct?.productName}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Image Carousel -->
+        <div id="productCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <!-- Main Image -->
+            <div class="carousel-item active">
+              <img [src]="'assets/img/' + selectedProduct?.image" 
+                   class="d-block w-100 rounded" 
+                   alt="{{selectedProduct?.productName}}">
+            </div>
+            <!-- Additional Images -->
+            <div *ngFor="let image of additionalImages" class="carousel-item">
+              <img [src]="'assets/img/' + image.name" 
+                   class="d-block w-100 rounded" 
+                   alt="{{selectedProduct?.productName}}">
+            </div>
+          </div>
+          <!-- Carousel Controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+
+        <!-- Product Details -->
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Category:</strong> {{selectedProduct?.category}}</p>
+            <p><strong>Brand:</strong> {{selectedProduct?.brand}}</p>
+            <p><strong>Price:</strong> {{selectedProduct?.price}} DT</p>
+            <p><strong>Popularity:</strong> {{selectedProduct?.popularity}}</p>
+            <p><strong>Number of Sales:</strong> {{selectedProduct?.numberOfSales}}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Available Colors:</strong></p>
+            <div class="d-flex">
+              <span *ngFor="let color of selectedProduct?.availableColors?.split(',')" 
+                    class="color-dot me-2" [style.backgroundColor]="color.trim()"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Description -->
+        <div class="mt-4">
+          <h6>Description</h6>
+          <p>{{selectedProduct?.description}}</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
       </div>
     </div>
   </div>

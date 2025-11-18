@@ -2,6 +2,7 @@ package electronics.elecstore.models;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "products")
@@ -100,5 +101,18 @@ public class ProductsModel {
     public void setDate(Date date) { this.date = date; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductsModel that = (ProductsModel) o;
+        return Objects.equals(id, that.id); // Compare by product ID
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Use product ID for hashing
+    }
 }
 

@@ -6,7 +6,6 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import localeEn from '@angular/common/locales/en';
 
 
 export const appConfig: ApplicationConfig = {

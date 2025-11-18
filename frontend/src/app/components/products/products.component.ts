@@ -2,21 +2,30 @@ import { Component, OnInit, PLATFORM_ID, Inject  } from '@angular/core';
 import { CommonModule,isPlatformBrowser } from '@angular/common';
 import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../models/product.model';
+import { ImagesModel } from '../../models/images.model';
 import { CartItem } from '../../models/cartItem.model';
+import { ImagesService } from '../../services/images/images.service';
 import { CartService } from '../../services/cart/cart.service';
+import { WishlistService } from '../../services/wishlist/wishlist.service';
 import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Router,RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+
+library.add(faHeartSolid, faHeartRegular);
 @Component({
   selector: 'app-products',
-  imports: [CommonModule,RouterModule,ReactiveFormsModule],
+  imports: [CommonModule,RouterModule,ReactiveFormsModule,FontAwesomeModule],
   standalone: true,
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
 export class ProductsComponent implements OnInit {
   status: number = 0;
+  userId: number | null=null ;
   products: Product[] = []; // To store the list of products
   cartItems: CartItem[] = [];
   productForm: FormGroup;
@@ -26,15 +35,21 @@ export class ProductsComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 8;
   totalPages: number = 0;
+  selectedProduct: Product | null = null; 
+  additionalImages: ImagesModel[] = [];
+  wishlistItems: Set<number> = new Set<number>();
+  faHeartSolid = faHeartSolid;
+  faHeartRegular = faHeartRegular;
 
   constructor(
     private productsService: ProductService,
     private cartService: CartService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private toastr: ToastrService,
-    private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private imagesService: ImagesService,
+    private wishlistService: WishlistService
   ) {
     this.productForm = this.fb.group({
       productName: ['', Validators.required],
@@ -65,19 +80,18 @@ export class ProductsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
+    if (isPlatformBrowser(this.platformId) && localStorage.getItem('currentUser') ) {
       const userDetails = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (userDetails ) {
         this.status = userDetails.status;
-        console.log('User Status:', this.status);
+        this.userId = userDetails.id;
+        console.log('User id:', this.userId);
       } else {
-        console.warn('No user is logged in.');
+        console.info('No user is logged in.');
       }
-    } else {
-      console.warn('localStorage is not available in this environment.');
-    }
+     
 
     this.loadProducts();
+    this.loadWishlist();
   }
   
   // Fetch the products from the backend
@@ -92,6 +106,14 @@ export class ProductsComponent implements OnInit {
       }
     );
   }
+
+  // Method to get the product image or fallback image
+getProductImage(image: string | null): string {
+  if (!image) {
+    return 'assets/img/null.jpg';
+  }
+  return 'assets/img/' + image;
+}
   loadProducts(): void {
     this.productsService.getProducts().subscribe((data: Product[]) => {
       this.products = data;
@@ -215,23 +237,102 @@ console.log('button clicked');
 }
 
   addToCart(productId: number, quantity: number): void {
-    if (isPlatformBrowser(this.platformId)) {
+    if (isPlatformBrowser(this.platformId ) && localStorage.getItem('currentUser')) {
       const userDetails = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  
-      if (userDetails) {
         const userId = userDetails.id; // Retrieve userId from stored user details
   
         this.cartService.addItem(userId, productId, quantity).subscribe(() => {
           this.loadCart();
           this.toastr.success('Item Added to cart ', 'Item Added Successfully');
         });
-      } else {
-        console.warn('User is not logged in. Cannot add to cart.');
-      }
+    }else {
+      this.toastr.info('User is not logged in. Cannot add to cart.');
     }
   }
   
+    // Load product details and additional images
+    loadProductDetails(product: Product): void {
+      this.selectedProduct = product;
+      this.loadAdditionalImages(product.id);
+    }
+  
+    // Fetch additional images for the product
+    loadAdditionalImages(productId: number): void {
+      this.imagesService.getImagesByProductId(productId).subscribe(
+        (images: ImagesModel[]) => {
+          this.additionalImages = images;
+        },
+        (error) => {
+          console.error('Failed to load additional images:', error);
+        }
+      );
+    }
+
+    loadWishlist(): void {
+      if (this.userId) {
+        this.wishlistService.getWishlistByUser(this.userId).subscribe({
+          next: (wishlist) => {
+            // Clear the existing wishlist items
+            this.wishlistItems.clear();
+    
+            // Add product IDs from the backend to the wishlistItems set
+            if (wishlist && wishlist.products) {
+              wishlist.products.forEach((product: Product) => this.wishlistItems.add(product.id));
+            }
+          },
+          error: (err) => {
+            console.error('Failed to load wishlist:', err);
+          },
+        });
+      }
+    }
+
+    // Check if a product is in the wishlist
+    isInWishlist(productId: number): boolean {
+      return this.wishlistItems.has(productId);
+    }
+
+    // Toggle product in wishlist
+    toggleWishlist(productId: number): void {
+      if (this.isInWishlist(productId)) {
+        this.wishlistItems.delete(productId); 
+        this.removeFromWishlist(productId); 
+      } else {
+        this.wishlistItems.add(productId); 
+        this.addToWishlist(productId);
+      }
+    }
+
+    // Add product to wishlist (calls the WishlistService)
+    addToWishlist(productId: number): void {
+      if (this.userId) {
+        this.wishlistService.addProductToWishlist(this.userId, productId).subscribe({
+          next: () => {
+            this.wishlistItems.add(productId);
+            console.log('Product added to wishlist:', productId);
+          },
+          error: (err) => {
+            console.error('Failed to add product to wishlist:', err);
+          },
+        });
+      }
+    }
+
+    removeFromWishlist(productId: number): void {
+      if (this.userId) {
+        this.wishlistService.removeProductFromWishlist(this.userId, productId).subscribe({
+          next: () => {
+            this.wishlistItems.delete(productId); // Remove product ID from the set
+            console.log('Product removed from wishlist:', productId);
+          },
+          error: (err) => {
+            console.error('Failed to remove product from wishlist:', err);
+          },
+        });
+      }
+    }
+
   isAdmin(): boolean {
-    return this.status === 1;
+    return isPlatformBrowser(this.platformId)&& localStorage.getItem('currentUser')!= null && this.status === 1;
   }
 }

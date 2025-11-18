@@ -66,7 +66,8 @@ export class AuthService {
             id: response.id,
             username : username, 
             token: response.token,
-            status: response.status
+            status: response.status,
+            photo: response.photo
              
           };
           console.log('Backend Response:', response);
@@ -88,7 +89,8 @@ export class AuthService {
               id: response.id,
               username : username, 
               token: response.token,
-              status: response.status || 0 // Default to normal user if status not specified
+              status: response.status || 0 ,
+              photo: response.photo || "avatar.jpg" 
             };
             
             // Store user details in local storage
@@ -100,18 +102,6 @@ export class AuthService {
           return response;
         })
       );
-  }
-
-  // Check if user is admin
-  isAdmin(): boolean {
-    const currentUser = this.getCurrentUserValue();
-    return currentUser && currentUser.status === 1;
-  }
-
-  // Check if user is normal user
-  isUser(): boolean {
-    const currentUser = this.getCurrentUserValue();
-    return currentUser && currentUser.status === 0;
   }
 
   logout() {

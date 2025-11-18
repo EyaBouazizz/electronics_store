@@ -53,7 +53,7 @@ public class AuthController {
         UsersModel user = usersService.getUserByUsername(loginRequest.getUsername())
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return ResponseEntity.ok(new AuthResponse(token, user.getUsername(), user.getStatus() , user.getId()));
+        return ResponseEntity.ok(new AuthResponse(token, user.getUsername(), user.getStatus() , user.getId(), user.getPhoto()));
     }
 
     @PostMapping("/signup")
@@ -67,7 +67,8 @@ public class AuthController {
         UsersModel newUser = new UsersModel();
         newUser.setUsername(signupRequest.getUsername());
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        newUser.setStatus(0); // Default to normal user
+        newUser.setStatus(0);
+        newUser.setPhoto("avatar.jpg");
 
         UsersModel createdUser = usersService.createUser(newUser);
 
@@ -75,6 +76,6 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(createdUser.getUsername());
         String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new AuthResponse(token, createdUser.getUsername(), createdUser.getStatus(), createdUser.getId()));
+        return ResponseEntity.ok(new AuthResponse(token, createdUser.getUsername(), createdUser.getStatus(), createdUser.getId() , createdUser.getPhoto()));
     }
 }
